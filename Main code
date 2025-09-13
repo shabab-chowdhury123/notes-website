@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AS/A Level Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 15px;
+      font-size: 24px;
+    }
+    .page {
+      display: none;
+      padding: 20px;
+    }
+    .active {
+      display: block;
+    }
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 20px;
+      background: #3498db;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background: #2980b9;
+    }
+    .notes-box {
+      text-align: left;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 15px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <header>AS/A Level Notes</header>
+
+  <!-- Homepage -->
+  <div id="home" class="page active">
+    <h2>Select a Subject</h2>
+    <div>
+      <div class="btn" onclick="openSubject('Math')">Math</div>
+      <div class="btn" onclick="openSubject('Physics')">Physics</div>
+      <div class="btn" onclick="openSubject('Biology')">Biology</div>
+      <div class="btn" onclick="openSubject('Chemistry')">Chemistry</div>
+      <div class="btn" onclick="openSubject('Business')">Business</div>
+      <div class="btn" onclick="openSubject('Economics')">Economics</div>
+    </div>
+  </div>
+
+  <!-- Subject Page -->
+  <div id="subjectPage" class="page">
+    <h2 id="subjectTitle"></h2>
+    <div>
+      <div class="btn" onclick="openLevel('AS')">AS Level</div>
+      <div class="btn" onclick="openLevel('A')">A Level</div>
+    </div>
+    <div class="btn" onclick="goHome()">⬅ Back</div>
+  </div>
+
+  <!-- Topics Page -->
+  <div id="topicsPage" class="page">
+    <h2 id="levelTitle"></h2>
+    <div id="topicsList"></div>
+    <div class="btn" onclick="backToSubject()">⬅ Back</div>
+  </div>
+
+  <!-- Notes Page -->
+  <div id="notesPage" class="page">
+    <h2 id="notesTitle"></h2>
+    <div class="notes-box" id="notesContent"></div>
+    <div class="btn" onclick="backToTopics()">⬅ Back</div>
+  </div>
+
+  <script>
+    const pages = ["home","subjectPage","topicsPage","notesPage"];
+    let currentSubject = "";
+    let currentLevel = "";
+
+    const topics = {
+      Math: {
+        AS: ["Algebra", "Differentiation", "Integration"],
+        A: ["Complex Numbers", "Matrices", "Vectors"]
+      },
+      Physics: {
+        AS: ["Mechanics", "Waves", "Electricity"],
+        A: ["Quantum Physics", "Nuclear Physics", "Thermodynamics"]
+      },
+      Biology: {
+        AS: ["Cell Structure", "Enzymes", "Genetics"],
+        A: ["Immunology", "Photosynthesis", "Evolution"]
+      },
+      Chemistry: {
+        AS: ["Atomic Structure", "Bonding", "Moles"],
+        A: ["Organic Chemistry", "Equilibria", "Electrochemistry"]
+      },
+      Business: {
+        AS: ["Business Objectives", "Marketing", "Finance"],
+        A: ["Globalisation", "Strategy", "Innovation"]
+      },
+      Economics: {
+        AS: ["Demand & Supply", "Elasticity", "Market Failure"],
+        A: ["Macroeconomics", "International Trade", "Development Economics"]
+      }
+    };
+
+    const notes = {
+      Algebra: "Algebra deals with manipulating symbols and solving equations.",
+      Differentiation: "Differentiation is finding the derivative of a function.",
+      Integration: "Integration is the reverse of differentiation, used to find area under a curve.",
+      "Complex Numbers": "Complex numbers include real and imaginary parts.",
+      Matrices: "Matrices are rectangular arrays of numbers used in linear algebra.",
+      Vectors: "Vectors have both magnitude and direction.",
+      Mechanics: "Mechanics studies motion and forces.",
+      Waves: "Waves transfer energy without transferring matter.",
+      Electricity: "Electricity involves the flow of electric charge.",
+      "Quantum Physics": "Quantum physics studies phenomena at atomic scales.",
+      "Nuclear Physics": "Nuclear physics studies the atomic nucleus.",
+      Thermodynamics: "Thermodynamics deals with heat and energy transfer.",
+      "Cell Structure": "Cells are the basic unit of life, with organelles like the nucleus.",
+      Enzymes: "Enzymes are biological catalysts that speed up reactions.",
+      Genetics: "Genetics is the study of heredity and variation.",
+      Immunology: "Immunology is the study of the immune system.",
+      Photosynthesis: "Photosynthesis converts light energy into chemical energy in plants.",
+      Evolution: "Evolution explains the diversity of life through natural selection.",
+      "Atomic Structure": "Atoms consist of protons, neutrons, and electrons.",
+      Bonding: "Bonding involves ionic, covalent, and metallic interactions.",
+      Moles: "The mole is a unit to measure the amount of substance.",
+      "Organic Chemistry": "Organic chemistry studies carbon-based compounds.",
+      Equilibria: "Equilibria refers to reversible reactions reaching balance.",
+      Electrochemistry: "Electrochemistry deals with redox reactions and electricity.",
+      "Business Objectives": "Businesses aim to maximize profit, growth, and market share.",
+      Marketing: "Marketing is about promoting and selling products.",
+      Finance: "Finance involves managing money, investment, and risk.",
+      Globalisation: "Globalisation increases interdependence between economies.",
+      Strategy: "Business strategy is the plan to achieve long-term goals.",
+      Innovation: "Innovation is introducing new ideas, products, or processes.",
+      "Demand & Supply": "Demand and supply determine prices in markets.",
+      Elasticity: "Elasticity measures responsiveness of demand or supply.",
+      "Market Failure": "Market failure occurs when resources are misallocated.",
+      Macroeconomics: "Macroeconomics studies the whole economy: GDP, inflation, unemployment.",
+      "International Trade": "Trade involves exchange of goods/services between countries.",
+      "Development Economics": "Development economics studies growth in low-income countries."
+    };
+
+    function showPage(id) {
+      pages.forEach(p => document.getElementById(p).classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
+
+    function openSubject(subject) {
+      currentSubject = subject;
+      document.getElementById("subjectTitle").innerText = subject;
+      showPage("subjectPage");
+    }
+
+    function openLevel(level) {
+      currentLevel = level;
+      document.getElementById("levelTitle").innerText = currentSubject + " - " + level + " Level Topics";
+      const list = document.getElementById("topicsList");
+      list.innerHTML = "";
+      topics[currentSubject][level].forEach(topic => {
+        let btn = document.createElement("div");
+        btn.className = "btn";
+        btn.innerText = topic;
+        btn.onclick = () => openNotes(topic);
+        list.appendChild(btn);
+      });
+      showPage("topicsPage");
+    }
+
+    function openNotes(topic) {
+      document.getElementById("notesTitle").innerText = topic + " Notes";
+      document.getElementById("notesContent").innerText = notes[topic] || "No notes available yet.";
+      showPage("notesPage");
+    }
+
+    function goHome() {
+      showPage("home");
+    }
+    function backToSubject() {
+      showPage("subjectPage");
+    }
+    function backToTopics() {
+      showPage("topicsPage");
+    }
+  </script>
+</body>
+</html>
